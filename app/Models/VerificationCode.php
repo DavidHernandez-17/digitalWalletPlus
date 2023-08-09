@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class VerificationCode extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'id_client',
+        'code',
+        'expire_at'
+    ];
+
 }

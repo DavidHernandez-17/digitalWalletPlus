@@ -4,35 +4,44 @@ namespace App\Http\Controllers;
 require_once base_path('lib/nusoap/nusoap.php');
 
 use App\Models\User;
+use Exception;
 
 class SoapController extends Controller
 {
     public function server()
     {
-        set_time_limit(300);
+        try {
+            return response('Hola sapo hpta');
+            // set_time_limit(300);
         
-        $url = request()->root();
-        $namespace = "{$url}/soap";
+            // $url = request()->root();
+            // $namespace = "{$url}/soap";
 
-        $server = new \nusoap_server();
-        $server->configureWSDL('LaravelSOAP', $namespace);
+            // $server = new \nusoap_server();
+            // $server->configureWSDL('LaravelSOAP', $namespace);
 
-        // Registramos un método que devuelve un usuario según su ID
-        $server->register('getUser',
-            ['id' => 'xsd:int'],  // Parámetros de entrada
-            ['return' => 'xsd:array'],  // Parámetros de salida
-            $namespace,
-            false,
-            'rpc',
-            'encoded',
-            'Obtiene un usuario por ID'
-        );
 
-        $server->service(file_get_contents("php://input"));
+            // // Registramos un método que devuelve un usuario según su ID
+            // $server->register('getUser',
+            //     ['id' => 'xsd:int'],  // Parámetros de entrada
+            //     ['return' => 'xsd:array'],  // Parámetros de salida
+            //     $namespace,
+            //     false,
+            //     'rpc',
+            //     'encoded',
+            //     'Obtiene un usuario por ID'
+            // );
+
+            // $server->service(file_get_contents("php://input"));
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     public function getWsdl()
     {
+        return response('Sapo perro');
+        
         $url = request()->root();
         $namespace = "{$url}/soap";
 
@@ -56,11 +65,15 @@ class SoapController extends Controller
 
     public function getUser($id)
     {
-        if ($id) {
-            return User::find($id)->toArray();
-        }
-        else{
-            return ['error' => 'Id no enviado'];
+        try {
+            if ($id) {
+                return User::find($id)->toArray();
+            }
+            else{
+                return ['error' => 'Id no enviado'];
+            }
+        } catch (Exception $e) {
+            $GLOBALS['server']->fault('Server Error', $e->getMessage());
         }
     }
 }

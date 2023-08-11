@@ -17,24 +17,26 @@ class SoapClientController extends Controller
         set_time_limit(300);
         $baseUrl = request()->root();
 
-        $wsdl = $baseUrl.'?wsdl';
+        $wsdl = $baseUrl.'/soap/wsdl';
 
         // Configuración para el cliente SOAP.
         $options = [
             'trace' => 1,
             'exception' => true,
-            'cache_wsdl' => WSDL_CACHE_NONE,
         ];
-    
+  
+        // Iniciar el cliente SOAP y realizar la llamada.
+        $client = new SoapClient($wsdl);
+        return response($client);
+        
         try {
-            // Iniciar el cliente SOAP y realizar la llamada.
-            $client = new SoapClient($wsdl, $options);
+            
             $response = $client->getUser(['id' => $id]);
 
             echo "REQUEST:\n" . $client->__getLastRequest() . "\n";
             echo "RESPONSE:\n" . $client->__getLastResponse() . "\n";
     
-            return response()->json($response);
+            
 
         } catch (SoapFault $fault) {
             // Manejar errores.

@@ -3,12 +3,16 @@ import { ref } from 'vue';
 import AppLayout from './Layout.vue';
 import ModalRegister from './ModalRegister.vue';
 import Reload from './Reload.vue';
+import Pay from './Pay.vue';
+import Balance from './Balance.vue';
 
 const isLoading = ref(false);
 const showButton = ref(true);
 const showModalRegister = ref(false);
 const showReload = ref(false);
 const showLogin = ref(true);
+const showPay = ref(false);
+const showBalance = ref(false);
 
 const callSoapClient = async() => {
     console.log('Inicia proceso de consulta...');
@@ -34,6 +38,17 @@ const toggleModal = (component) => {
 
     if (component == 'reload') {
         showLogin.value = !showLogin.value;
+        showReload.value = !showReload.value;
+    }
+
+    if (component == 'pay') {
+        showLogin.value = !showLogin.value;
+        showPay.value = !showPay.value;
+    }
+
+    if (component == 'balance') {
+        showLogin.value = !showLogin.value;
+        showBalance.value = !showBalance.value;
     }
 }
 
@@ -94,13 +109,13 @@ const toggleModal = (component) => {
 
                                         <div class="row">
                                             <div class="btn-group mt-3">
-                                                <button @click.prevent="submitForm" :disabled="isLoading" 
+                                                <button @click.prevent="toggleModal('pay')" :disabled="isLoading" 
                                                     class="btn btn-lg btn-light m-1"
                                                     v-show="showButton"
                                                     type="submit">
                                                     Pagar
                                                 </button>
-                                                <button @click.prevent="submitForm" class="btn btn-lg btn-primary">
+                                                <button @click.prevent="toggleModal('pay')" class="btn btn-lg btn-primary">
                                                     <span v-if="isLoading">
                                                         <i class="fa-solid fa-spinner fa-spin ms-2"></i>
                                                     </span>
@@ -111,13 +126,13 @@ const toggleModal = (component) => {
 
                                         <div class="row">
                                             <div class="btn-group mt-3">
-                                                <button @click.prevent="submitForm" :disabled="isLoading" 
+                                                <button @click.prevent="toggleModal('balance')" :disabled="isLoading" 
                                                     class="btn btn-lg btn-light m-1"
                                                     v-show="showButton"
                                                     type="submit">
                                                     Saldo
                                                 </button>
-                                                <button @click.prevent="submitForm" class="btn btn-lg btn-primary">
+                                                <button @click.prevent="toggleModal('balance')" class="btn btn-lg btn-primary">
                                                     <span v-if="isLoading">
                                                         <i class="fa-solid fa-spinner fa-spin ms-2"></i>
                                                     </span>
@@ -133,8 +148,14 @@ const toggleModal = (component) => {
                 </div>
                 <ModalRegister :show="showModalRegister" @close="toggleModal('register')"/>
             </div>
-            <div v-else>
+            <div v-show="showReload">
                 <Reload :show="showReload" @close="toggleModal('reload')"/>
+            </div>
+            <div v-show="showPay">
+                <Pay :show="showPay" @close="toggleModal('pay')"/>
+            </div>
+            <div v-show="showBalance">
+                <Balance :show="showBalance" @close="toggleModal('balance')"/>
             </div>
         </template>
     </AppLayout>

@@ -4,9 +4,9 @@ import Swal from 'sweetalert2';
 import axios from 'axios';
 
 const document = ref('');
-const cell_phone = ref('');
+const concept = ref('');
+const pay_to = ref('');
 const value = ref('');
-const wallet = ref('');
 const messages = ref('');
 
 const props = defineProps({
@@ -21,7 +21,8 @@ const emits = defineEmits(['close']);
 const save = () => {
     let request = {
         'document': document.value,
-        'cell_phone': cell_phone.value,
+        'concept': concept.value,
+        'pay_to': pay_to.value,
         'value': value.value
     };
 
@@ -36,9 +37,9 @@ const save = () => {
     .catch(error => {
         if (error.response && error.response.status === 422) {
             messages.value.document = error.response.data.document;
-            messages.value.cell_phone = error.response.data.cell_phone;
+            messages.value.concept = error.response.data.concept;
+            messages.value.pay_to = error.response.data.pay_to;
             messages.value.value = error.response.data.value;
-            messages.value.wallet = error.response.data.wallet;
             console.log(error.response);
         } else {
             console.error(error.response);
@@ -73,7 +74,7 @@ const close = () => {
                     <div class="card-body p-5">
                         <div class="text-center">
                             <!-- <img class="logo-login-lateral" src="/assets/img/brand/wallet_main.jpg" alt="vista principal"/> -->
-                            <div class="h3 text-primary larger-text">Recarga tu</div>
+                            <div class="h3 text-primary larger-text">Pagar</div>
                             <div class="h1 text-primary larger-text"><strong>Billetera digital</strong><h5>plus <i class="fa-regular fa-copyright small"></i></h5></div>
                         </div>
 
@@ -96,10 +97,19 @@ const close = () => {
                                 </div>
                                 <div class="row mt-2">
                                     <div class="col-md-12">
-                                        <div :class="['form-group', {'has-error': messages.cell_phone}]">
-                                            <label class="text-white" for="cell_phone">Celular<strong class="text-danger"> *</strong></label>
-                                            <input class="form-control text-sm form-control-solid" v-model="cell_phone" type="text" placeholder="+57" />
-                                            <span v-if="messages.cell_phone" class="text-danger">{{ messages.cell_phone }}</span>
+                                        <div :class="['form-group', {'has-error': messages.concept}]">
+                                            <label class="text-white" for="concept">Concepto<strong class="text-danger"> *</strong></label>
+                                            <input class="form-control text-sm form-control-solid" v-model="concept" type="text" placeholder="seleccione" />
+                                            <span v-if="messages.concept" class="text-danger">{{ messages.concept }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-12">
+                                        <div :class="['form-group', {'has-error': messages.pay_to}]">
+                                            <label class="text-white" for="pay_to">Pagar a<strong class="text-danger"> *</strong></label>
+                                            <input class="form-control text-sm form-control-solid" v-model="pay_to" type="number" placeholder="613 000 126 33" />
+                                            <span v-if="messages.pay_to" class="text-danger">{{ messages.pay_to }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -112,20 +122,11 @@ const close = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row mt-2">
-                                    <div class="col-md-12">
-                                        <div :class="['form-group', {'has-error': messages.wallet}]">
-                                            <label class="text-white" for="wallet">Billetera<strong class="text-danger"> *</strong></label>
-                                            <input class="form-control text-sm form-control-solid" v-model="wallet" type="number" placeholder="selecciona" />
-                                            <span v-if="messages.wallet" class="text-danger">{{ messages.wallet }}</span>
-                                        </div>
-                                    </div>
-                                </div>
 
                                 <div class="row mt-3 mb-2">
                                     <div class="col-md-12">
                                         <button class="btn btn-outline-secondary" @click.prevent="close"><i class="fa-solid fa-arrow-left"></i></button>
-                                        <button @click.prevent="save()" class="btn btn-outline-primary ms-2"><i class="fa-solid fa-bolt me-2"></i> Recargar</button>
+                                        <button @click.prevent="save()" class="btn btn-outline-primary ms-2"><i class="fa-solid fa-dollar-sign me-2"></i> Pagar</button>
                                     </div>
                                 </div>
 

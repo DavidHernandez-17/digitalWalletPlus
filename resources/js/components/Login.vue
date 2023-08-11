@@ -5,6 +5,23 @@ import AppLayout from './Layout.vue';
 const isLoading = ref(false);
 const showButton = ref(true);
 
+const callSoapClient = async() => {
+    console.log('Inicia proceso de consulta...');
+    try {
+    const userId = 1; // Suponiendo que estás probando con el usuario con ID 1
+    const response = await axios.get('/soap-client/${userId}');
+    
+        if (response.data.error) {
+            console.log(response.data);
+        } else {
+            console.log(response.data);
+        }
+    } catch (error) {
+        console.log("Hubo un error al hacer la solicitud " + error);
+    }
+    
+}
+
 </script>
 
 <template>
@@ -28,7 +45,7 @@ const showButton = ref(true);
                                         </div> -->
                                         <div class="row">
                                             <div class="btn-group mt-3">
-                                                <button @click.prevent="submitForm" :disabled="isLoading" 
+                                                <button @click.prevent="callSoapClient()" :disabled="isLoading" 
                                                     class="btn btn-lg btn-light m-1"
                                                     v-show="showButton"
                                                     type="submit">

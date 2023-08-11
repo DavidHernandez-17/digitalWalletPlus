@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\SoapClientController;
+use App\Http\Controllers\SoapController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +18,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+# Server SOAP
+Route::get('/soap/wsdl', [SoapController::class, 'getWsdl']);
+Route::post('/soap', [SoapController::class, 'server']);
+
+
+# Client SOAP
+Route::get('/soap-client/{id}', [SoapClientController::class, 'getClient'])->name('get_user');

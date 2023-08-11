@@ -1,9 +1,11 @@
 <script setup>
 import { ref } from 'vue';
 import AppLayout from './Layout.vue';
+import ModalRegister from './ModalRegister.vue';
 
 const isLoading = ref(false);
 const showButton = ref(true);
+const showModalRegister = ref(false);
 
 const callSoapClient = async() => {
     console.log('Inicia proceso de consulta...');
@@ -20,6 +22,10 @@ const callSoapClient = async() => {
         console.log("Hubo un error al hacer la solicitud " + error);
     }
     
+}
+
+const toggleModal = () => {
+    showModalRegister.value = !showModalRegister.value;
 }
 
 </script>
@@ -45,13 +51,13 @@ const callSoapClient = async() => {
                                         </div> -->
                                         <div class="row">
                                             <div class="btn-group mt-3">
-                                                <button @click.prevent="callSoapClient()" :disabled="isLoading" 
+                                                <button @click.prevent="toggleModal()" :disabled="isLoading" 
                                                     class="btn btn-lg btn-light m-1"
                                                     v-show="showButton"
                                                     type="submit">
                                                     Registrarse
                                                 </button>
-                                                <button @click.prevent="submitForm" class="btn btn-lg btn-primary">
+                                                <button @click.prevent="toggleModal()" class="btn btn-lg btn-primary">
                                                     <span v-if="isLoading">
                                                         <i class="fa-solid fa-spinner fa-spin ms-2"></i>
                                                     </span>
@@ -117,6 +123,7 @@ const callSoapClient = async() => {
                     </div>
                 </div>
             </div>
+            <ModalRegister :show="showModalRegister" @close="toggleModal"/>
         </template>
     </AppLayout>
 </template>

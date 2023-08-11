@@ -72,7 +72,7 @@ const closeModal = () => {
 
 <template>
 <div v-if="show" class="modal fade show" tabindex="-1" style="display: block;">
-    <div class="modal-dialog modal-md mt-5">
+    <div class="modal-dialog modal-md margin-top">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title"><i class="text-primary fa-regular fa-circle-check"></i> {{ title }}</h5>
@@ -142,5 +142,8 @@ span{
 }
 .has-error {
   border-color: red;
+}
+.margin-top{
+    margin-top: 100px;
 }
 </style>

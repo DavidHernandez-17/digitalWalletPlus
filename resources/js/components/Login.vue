@@ -2,16 +2,19 @@
 import { ref } from 'vue';
 import AppLayout from './Layout.vue';
 import ModalRegister from './ModalRegister.vue';
+import Reload from './Reload.vue';
 
 const isLoading = ref(false);
 const showButton = ref(true);
 const showModalRegister = ref(false);
+const showReload = ref(false);
+const showLogin = ref(true);
 
 const callSoapClient = async() => {
     console.log('Inicia proceso de consulta...');
     try {
     const userId = 1; // Suponiendo que estás probando con el usuario con ID 1
-    const response = await axios.get('/soap-client/${userId}');
+    const response = await axios.get('/soap-client/'+userId);
     
         if (response.data.error) {
             console.log(response.data);
@@ -24,8 +27,14 @@ const callSoapClient = async() => {
     
 }
 
-const toggleModal = () => {
-    showModalRegister.value = !showModalRegister.value;
+const toggleModal = (component) => {
+    if (component == 'register') {
+        showModalRegister.value = !showModalRegister.value;
+    }
+
+    if (component == 'reload') {
+        showLogin.value = !showLogin.value;
+    }
 }
 
 </script>
@@ -33,7 +42,7 @@ const toggleModal = () => {
 <template>
     <AppLayout>
         <template #content>
-            <div class="container-xl px-4">
+            <div v-if="showLogin" class="container-xl px-4">
                 <div class="row justify-content-center">
                     <div class="col-xl-5 col-lg-6 col-md-8 col-sm-11">
                         <div class="margin-top-login">
@@ -51,13 +60,13 @@ const toggleModal = () => {
                                         </div> -->
                                         <div class="row">
                                             <div class="btn-group mt-3">
-                                                <button @click.prevent="toggleModal()" :disabled="isLoading" 
+                                                <button @click.prevent="toggleModal('register')" :disabled="isLoading" 
                                                     class="btn btn-lg btn-light m-1"
                                                     v-show="showButton"
                                                     type="submit">
                                                     Registrarse
                                                 </button>
-                                                <button @click.prevent="toggleModal()" class="btn btn-lg btn-primary">
+                                                <button @click.prevent="toggleModal('register')" class="btn btn-lg btn-primary">
                                                     <span v-if="isLoading">
                                                         <i class="fa-solid fa-spinner fa-spin ms-2"></i>
                                                     </span>
@@ -68,13 +77,13 @@ const toggleModal = () => {
 
                                         <div class="row">
                                             <div class="btn-group mt-3">
-                                                <button @click.prevent="submitForm" :disabled="isLoading" 
+                                                <button @click.prevent="toggleModal('reload')" :disabled="isLoading" 
                                                     class="btn btn-lg btn-light m-1"
                                                     v-show="showButton"
                                                     type="submit">
                                                     Recargar
                                                 </button>
-                                                <button @click.prevent="submitForm" class="btn btn-lg btn-primary">
+                                                <button @click.prevent="toggleModal('reload')" class="btn btn-lg btn-primary">
                                                     <span v-if="isLoading">
                                                         <i class="fa-solid fa-spinner fa-spin ms-2"></i>
                                                     </span>
@@ -122,8 +131,11 @@ const toggleModal = () => {
                         </div>
                     </div>
                 </div>
+                <ModalRegister :show="showModalRegister" @close="toggleModal('register')"/>
             </div>
-            <ModalRegister :show="showModalRegister" @close="toggleModal"/>
+            <div v-else>
+                <Reload :show="showReload" @close="toggleModal('reload')"/>
+            </div>
         </template>
     </AppLayout>
 </template>

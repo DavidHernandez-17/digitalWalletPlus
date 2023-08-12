@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Customer\RegisterController;
+use App\Http\Controllers\Wallet\RechargeWalletController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,4 +20,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/registrar', [RegisterController::class, 'customerRegistration'])->name('customer_registration');
+# Customer
+Route::post('cliente/registrar', [RegisterController::class, 'customerRegistration'])->name('customer_registration');
+
+# Wallet
+Route::post('billetera/recargar/{id}', [RechargeWalletController::class, 'index'])->name('index.recharge_wallet');
+Route::post('billetera/recargar', [RechargeWalletController::class, 'recharge'])->name('recharge_wallet');

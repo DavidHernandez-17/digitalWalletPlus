@@ -7,6 +7,7 @@ const document = ref('');
 const full_name = ref('');
 const email = ref('');
 const cell_phone = ref('');
+const wallet_name = ref('');
 const messages = ref({});
 
 const props = defineProps({
@@ -28,10 +29,11 @@ const save = () => {
         'full_name': full_name.value,
         'email': email.value,
         'cell_phone': cell_phone.value,
+        'wallet_name': wallet_name.value
     };
 
     messages.value = {};
-    axios.post('api/registrar', request)
+    axios.post('api/cliente/registrar', request)
     .then(response => {
         messages.value = response.data;
         console.log(messages.value);
@@ -41,6 +43,7 @@ const save = () => {
         full_name.value = '';
         email.value = '';
         cell_phone.value = '';
+        wallet_name.value = '';
     })
     .catch(error => {
         if (error.response && error.response.status === 422) {
@@ -48,6 +51,7 @@ const save = () => {
             messages.value.full_name = error.response.data.full_name;
             messages.value.email = error.response.data.email;
             messages.value.cell_phone = error.response.data.cell_phone;
+            messages.value.wallet_name = error.response.data.wallet_name;
             console.log(error.response);
         } else {
             console.error(error.response);
@@ -119,6 +123,15 @@ const closeModal = () => {
                                         <label for="name">Celular<strong class="text-danger"> *</strong></label>
                                         <input class="form-control text-sm form-control-solid" v-model="cell_phone" type="text" placeholder="+57" />
                                         <span v-if="messages.cell_phone" class="text-danger">{{ messages.cell_phone }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <div :class="['form-group', {'has-error': messages.wallet_name}]">
+                                        <label for="name">Nombre billetera<strong class="text-danger"> *</strong></label>
+                                        <input class="form-control text-sm form-control-solid" v-model="wallet_name" type="text" placeholder="Viajes" />
+                                        <span v-if="messages.wallet_name" class="text-danger">{{ messages.wallet_name }}</span>
                                     </div>
                                 </div>
                             </div>

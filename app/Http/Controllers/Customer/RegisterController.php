@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\DigitalWallet;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -25,6 +26,7 @@ class RegisterController extends Controller
             'full_name' => 'required',
             'email' => 'required|email',
             'cell_phone' => 'required|min:10',
+            'wallet_name' => 'required|min:4',
         ],
         [
             'document.required' =>'El documento es requerido.',
@@ -33,6 +35,8 @@ class RegisterController extends Controller
             'email.email' =>'El email ingresado no es correcto.',
             'cell_phone.required' =>'El celular es requerido.',
             'cell_phone.min' =>'El celular debe tener mínimo 10 digitos.',
+            'wallet_name.required' =>'El nombre de la billetera es requerido.',
+            'wallet_name.min' =>'El nombre de la billetera debe tener mínimo 4 digitos.',
         ]);
 
         if ($validator->fails()) {
@@ -44,6 +48,7 @@ class RegisterController extends Controller
                 'full_name' => $errors->first('full_name'),
                 'email' => $errors->first('email'),
                 'cell_phone' => $errors->first('cell_phone'),
+                'wallet_name' => $errors->first('wallet_name'),
             ], 422);
         }
 
@@ -54,6 +59,16 @@ class RegisterController extends Controller
                 'full_name' => $request->full_name,
                 'email' => $request->email,
                 'cell_phone' => $request->cell_phone,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ]);
+
+            $user = User::where('document', $request->document)->first();
+
+            DigitalWallet::create([
+                'name' => $request->wallet_name,
+                'saldo' => '0',
+                'id_client' => $user->id,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]);

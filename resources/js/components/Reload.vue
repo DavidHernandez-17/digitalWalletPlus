@@ -1,11 +1,12 @@
 <script setup>
-import { defineProps, defineEmits, ref } from 'vue';
+import { defineProps, defineEmits, ref, watch } from 'vue';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 
 const document = ref('');
 const cell_phone = ref('');
 const value = ref('');
+const optionsWallet = ref();
 const wallet = ref('');
 const messages = ref('');
 
@@ -63,6 +64,19 @@ const close = () => {
     emits('close');
 };
 
+watch(document, async (newDocument) => {
+    optionsWallet.value = '';
+    if (newDocument) {
+        try {
+            const response = await axios.post('api/billetera/recargar/' + newDocument);
+            optionsWallet.value = response.data;
+            console.log(response.data);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+});
+
 </script>
 
 <template>
@@ -116,7 +130,11 @@ const close = () => {
                                     <div class="col-md-12">
                                         <div :class="['form-group', {'has-error': messages.wallet}]">
                                             <label class="text-white" for="wallet">Billetera<strong class="text-danger"> *</strong></label>
-                                            <input class="form-control text-sm form-control-solid" v-model="wallet" type="number" placeholder="selecciona" />
+                                            <select class="form-control text-sm form-control-solid" v-model="wallet">
+                                                <option v-for="wallet in optionsWallet" :value="wallet.id" :key="wallet.id">
+                                                    {{ wallet.name }}
+                                                </option>
+                                            </select>
                                             <span v-if="messages.wallet" class="text-danger">{{ messages.wallet }}</span>
                                         </div>
                                     </div>

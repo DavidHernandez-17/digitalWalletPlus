@@ -31,12 +31,16 @@ const save = () => {
     };
 
     messages.value = {};
-    axios.post(route('get_user'), request)
+    axios.post('api/registrar', request)
     .then(response => {
         messages.value = response.data;
         console.log(messages.value);
         showAlert('Exito', 'success');
         emits('close');
+        document.value = '';
+        full_name.value = '';
+        email.value = '';
+        cell_phone.value = '';
     })
     .catch(error => {
         if (error.response && error.response.status === 422) {
@@ -47,6 +51,8 @@ const save = () => {
             console.log(error.response);
         } else {
             console.error(error.response);
+            messages.value = error.response;
+            showAlert("Oops...", "error");
         }
     });
 }
@@ -59,8 +65,6 @@ const showAlert = (title, icon) => {
         icon: icon,
         confirmButtonText: 'Aceptar',
         confirmButtonColor: '#2C607F'
-    }).then(()=>{
-        window.location.reload();
     });
 };
 

@@ -23,16 +23,21 @@ const save = () => {
     let request = {
         'document': document.value,
         'cell_phone': cell_phone.value,
-        'value': value.value
+        'value': value.value,
+        'wallet': wallet.value
     };
 
     messages.value = {};
-    axios.post(route('get_user'), request)
+    axios.post('api/billetera/recargar', request)
     .then(response => {
         messages.value = response.data;
         console.log(messages.value);
         showAlert('Exito', 'success');
         emits('close');
+        document.value = '';
+        cell_phone.value = '';
+        value.value = '';
+        wallet.value = '';
     })
     .catch(error => {
         if (error.response && error.response.status === 422) {
@@ -42,7 +47,8 @@ const save = () => {
             messages.value.wallet = error.response.data.wallet;
             console.log(error.response);
         } else {
-            console.error(error.response);
+            messages.value = 'Los datos documento y celular no coinciden con el cliente';
+            showAlert('Oops...', 'error');
         }
     });
 }
@@ -55,8 +61,6 @@ const showAlert = (title, icon) => {
         icon: icon,
         confirmButtonText: 'Aceptar',
         confirmButtonColor: '#2C607F'
-    }).then(()=>{
-        window.location.reload();
     });
 };
 
@@ -70,6 +74,9 @@ watch(document, async (newDocument) => {
         try {
             const response = await axios.post('api/billetera/recargar/' + newDocument);
             optionsWallet.value = response.data;
+            if (optionsWallet.value == '') {
+                alert('opciones vacias');
+            }
             console.log(response.data);
         } catch (err) {
             console.log(err);

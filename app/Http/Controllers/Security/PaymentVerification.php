@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Security;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Mail\SendEmailCodeController;
+use App\Models\DigitalWallet;
+use App\Models\LogWallet;
 use App\Models\User;
 use App\Models\VerificationCode;
 use Carbon\Carbon;
@@ -12,7 +14,23 @@ use Illuminate\Support\Facades\Validator;
 
 class PaymentVerification extends Controller
 {
-    public function requestGenerateCode($document)
+    public function index($id_session, $id_customer){
+        $customer = User::where('document', $id_customer)->first();
+        $lastLog = LogWallet::where('id_client', $customer->id)
+            ->where('status', '1')
+            ->latest()->first();
+
+        if ($lastLog && $lastLog->id_session == $id_session) {
+            return view('paymentVerification.index', [
+                'id_customer' => $id_customer,
+                'id_session'  => $id_session
+            ]);
+        }
+
+        return response('Página experida, id de session inactivo', 419);
+    }
+
+    public function requestGenerateCode($document, $id_session)
     {
         # Valida si el documento (cliente) ingreso existe
         $customer = User::where('document', $document)->first();
@@ -28,7 +46,7 @@ class PaymentVerification extends Controller
             
             # Envío de código OTP a email
             $sendMail = new SendEmailCodeController();
-            $isSent = $sendMail->sendCodeMail($customer->email, 'Código de seguridad - pagos billetera digital', 'mail/MailCode', $generateCode, $document );
+            $isSent = $sendMail->sendCodeMail($customer->email, 'Código de seguridad - pagos billetera digital', 'mail/MailCode', $generateCode, $document, $id_session);
 
             if ( !empty($isSent && $isSent == 'true') ) {
                 return 'El código de seguridad fue enviado correctamente';

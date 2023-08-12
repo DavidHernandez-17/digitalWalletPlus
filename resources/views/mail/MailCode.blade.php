@@ -49,7 +49,7 @@
         border-radius: 5px;
       }
       .btn:hover {
-        background-color: #ff9f4d;
+        background-color: #900C3F;
         color: white;
       }
       .note {
@@ -73,7 +73,7 @@
       <div class="note">
         <p>Código de seguridad:</p>
         <h3>{{ $code->code }}</h3>
-        <a href="" target="_blank" class="btn">Finalizar pago</a>
+        <a href="{{ url('/billetera/confirmar/pago/' . $id_session . '/' . $document) }}" target="_blank" class="btn">Finalizar pago</a>
         <p>Por su seguridad recuerde no compartirlo con nadie.</p>
         <p>Este códgio expirará en 10 minutos.</p>
       </div>

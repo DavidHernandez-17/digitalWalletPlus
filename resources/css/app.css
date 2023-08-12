@@ -28,6 +28,12 @@
     border-radius: var(--bs-card-border-radius);
 }
 
+.bg-main{
+    background-image: url('assets/img/brand/background.svg');
+    background-size: cover;
+    background-position: center;
+}
+
 .card-body {
     flex: 1 1 auto;
     padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);
@@ -47,7 +53,20 @@
 .justify-content-center {
     justify-content: center !important;
 }
-.margin-top-login{
-    margin-top: 60px;
+.margin-top-verification{
+    margin-top: 80px;
+}
+.error {
+    color: rgb(241, 21, 13);
+}
+.success {
+    color: rgb(33, 153, 9);
+}
+
+@media (max-width: 768px) {
+.custom-input {
+        font-size: 12px;
+        padding: 5px;
+    }
 }
 

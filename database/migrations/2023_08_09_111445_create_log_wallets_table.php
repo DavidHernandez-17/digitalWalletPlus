@@ -14,9 +14,12 @@ return new class extends Migration
         Schema::create('log_wallets', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_wallet')->constrained('digital_wallets');
+            $table->foreignId('id_client')->constrained('users');
             $table->string('payment_concept');
-            $table->string('description');
+            $table->string('pay_to')->default('0');
             $table->integer('value');
+            $table->string('id_session');
+            $table->boolean('status');
             $table->timestamps();
         });
     }

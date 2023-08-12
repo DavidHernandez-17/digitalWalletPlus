@@ -16,7 +16,7 @@ class UsersSeeder extends Seeder
         User::create([
             'document' => '1193534443',
             'full_name' => 'David Hernández',
-            'email' => 'dh17002@gmail.com',
+            'email' => 'desarrollo5@albertoalvarez.com',
             'cell_phone' => '3017966824',
         ]);
 

@@ -11,9 +11,12 @@ class LogWallet extends Model
 
     protected $fillable = [
         'id_wallet',
+        'id_client',
         'payment_concept',
-        'description',
-        'value'
+        'pay_to',
+        'value',
+        'id_session',
+        'status'
     ];
 
     public function wallet(){

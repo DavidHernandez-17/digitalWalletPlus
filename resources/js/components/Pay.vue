@@ -47,6 +47,11 @@ const save = () => {
         console.log(messages.value);
         showAlert('Exito', 'success');
         emits('close');
+        document.value = '';
+        concept.value = '';
+        pay_to.value = '';
+        value.value = '';
+        wallet.value = ''
     })
     .catch(error => {
         if (error.response && error.response.status === 422) {
@@ -124,12 +129,6 @@ onMounted(() => {
 
                         <form>
                             <div class="col-md-10 offset-1 offset-sm-1">
-                                <!-- <div class="message">
-                                    <p v-if="message.length">
-                                        <span :class="styles" v-for="error in message" :key="error.id">{{ error }}</span>                                                    
-                                    </p>
-                                </div> -->
-                                
                                 <div class="row mt-4">
                                     <div class="col-md-12">
                                         <div :class="['form-group', {'has-error': messages.document}]">
@@ -144,7 +143,7 @@ onMounted(() => {
                                         <div :class="['form-group', {'has-error': messages.concept}]">
                                             <label class="text-white" for="concept">Concepto<strong class="text-danger"> *</strong></label>
                                             <select class="form-control text-sm form-control-solid" v-model="concept">
-                                                <option v-for="concept in optionsConcept" :value="concept.id" :key="concept.id">
+                                                <option v-for="concept in optionsConcept" :value="concept.name" :key="concept.id">
                                                     {{ concept.name }}
                                                 </option>
                                             </select>
@@ -183,15 +182,13 @@ onMounted(() => {
                                         </div>
                                     </div>
                                 </div>
-                                
 
                                 <div class="row mt-3 mb-2">
                                     <div class="col-md-12">
                                         <button class="btn btn-outline-secondary" @click.prevent="close"><i class="fa-solid fa-arrow-left"></i></button>
-                                        <button @click.prevent="save()" class="btn btn-outline-primary ms-2"><i class="fa-regular fa-paper-plane"></i> Solicitar confirmación</button>
+                                        <button @click.prevent="save()" class="btn btn-outline-primary ms-2"><i class="fa-solid fa-sm fa-lock"></i> Confirmar pago</button>
                                     </div>
                                 </div>
-
                             </div>
                         </form>
                     </div>

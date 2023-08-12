@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\Security\PaymentVerification;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,4 +17,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('index');
+
+Route::get('billetera/confirmar/pago/{id_sesion}/{id_customer}', [PaymentVerification::class, 'index']);

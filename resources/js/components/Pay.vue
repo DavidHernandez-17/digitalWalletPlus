@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, defineEmits, ref } from 'vue';
+import { defineProps, defineEmits, ref, onMounted, watch } from 'vue';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 
@@ -7,6 +7,9 @@ const document = ref('');
 const concept = ref('');
 const pay_to = ref('');
 const value = ref('');
+const wallet = ref('');
+const optionsConcept = ref();
+const optionsWallet = ref();
 const messages = ref('');
 
 const props = defineProps({
@@ -18,16 +21,27 @@ const props = defineProps({
 
 const emits = defineEmits(['close']);
 
+const getConcept = () => {
+    axios.get('api/billetera/pagar')
+    .then(response => {
+        optionsConcept.value = response.data;
+    })
+    .catch(error => {
+        console.log(error.response.data);
+    });
+}
+
 const save = () => {
     let request = {
         'document': document.value,
         'concept': concept.value,
         'pay_to': pay_to.value,
-        'value': value.value
+        'value': value.value,
+        'wallet': wallet.value,
     };
 
     messages.value = {};
-    axios.post(route('get_user'), request)
+    axios.post('api/billetera/pagar', request)
     .then(response => {
         messages.value = response.data;
         console.log(messages.value);
@@ -40,13 +54,40 @@ const save = () => {
             messages.value.concept = error.response.data.concept;
             messages.value.pay_to = error.response.data.pay_to;
             messages.value.value = error.response.data.value;
+            messages.value.wallet = error.response.data.wallet;
             console.log(error.response);
         } else {
-            console.error(error.response);
+            messages.value = error.response.data;
+            showAlert('Oops...', 'error');
+            console.error(error.response.data);
         }
     });
 }
 
+watch(value, async (newValue) => {
+    if (newValue) {
+        try {
+            if (newValue <= 0) {
+                messages.value.value = 'El valor debe ser superior a cero';
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+});
+
+watch(document, async (newDocument) => {
+    optionsWallet.value = '';
+    if (newDocument) {
+        try {
+            const response = await axios.post('api/billetera/recargar/' + newDocument);
+            optionsWallet.value = response.data;
+            console.log(response.data);
+        } catch (err) {
+            console.log(err);
+        }
+    }
+});
 
 const showAlert = (title, icon) => {
     Swal.fire({
@@ -55,8 +96,6 @@ const showAlert = (title, icon) => {
         icon: icon,
         confirmButtonText: 'Aceptar',
         confirmButtonColor: '#2C607F'
-    }).then(()=>{
-        window.location.reload();
     });
 };
 
@@ -64,17 +103,22 @@ const close = () => {
     emits('close');
 };
 
+onMounted(() => {
+    getConcept();
+});
+
+
 </script>
 
 <template>
     <div class="container-xl px-4">
         <div class="row justify-content-center">
             <div class="col-xl-5 col-lg-6 col-md-8 col-sm-11">
-                <div class="margin-top-login">
+                <div class="margin-top">
                     <div class="card-body p-5">
                         <div class="text-center">
                             <!-- <img class="logo-login-lateral" src="/assets/img/brand/wallet_main.jpg" alt="vista principal"/> -->
-                            <div class="h3 text-primary larger-text">Pagar</div>
+                            <div class="h3 text-primary larger-text">Zona pagos</div>
                             <div class="h1 text-primary larger-text"><strong>Billetera digital</strong><h5>plus <i class="fa-regular fa-copyright small"></i></h5></div>
                         </div>
 
@@ -99,7 +143,11 @@ const close = () => {
                                     <div class="col-md-12">
                                         <div :class="['form-group', {'has-error': messages.concept}]">
                                             <label class="text-white" for="concept">Concepto<strong class="text-danger"> *</strong></label>
-                                            <input class="form-control text-sm form-control-solid" v-model="concept" type="text" placeholder="seleccione" />
+                                            <select class="form-control text-sm form-control-solid" v-model="concept">
+                                                <option v-for="concept in optionsConcept" :value="concept.id" :key="concept.id">
+                                                    {{ concept.name }}
+                                                </option>
+                                            </select>
                                             <span v-if="messages.concept" class="text-danger">{{ messages.concept }}</span>
                                         </div>
                                     </div>
@@ -122,11 +170,25 @@ const close = () => {
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row mt-2">
+                                    <div class="col-md-12">
+                                        <div :class="['form-group', {'has-error': messages.wallet}]">
+                                            <label class="text-white" for="wallet">Pagar con billetera<strong class="text-danger"> *</strong></label>
+                                            <select class="form-control text-sm form-control-solid" v-model="wallet">
+                                                <option v-for="wallet in optionsWallet" :value="wallet.id" :key="wallet.id">
+                                                    {{ wallet.name }}
+                                                </option>
+                                            </select>
+                                            <span v-if="messages.wallet" class="text-danger">{{ messages.wallet }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
 
                                 <div class="row mt-3 mb-2">
                                     <div class="col-md-12">
                                         <button class="btn btn-outline-secondary" @click.prevent="close"><i class="fa-solid fa-arrow-left"></i></button>
-                                        <button @click.prevent="save()" class="btn btn-outline-primary ms-2"><i class="fa-solid fa-dollar-sign me-2"></i> Pagar</button>
+                                        <button @click.prevent="save()" class="btn btn-outline-primary ms-2"><i class="fa-regular fa-paper-plane"></i> Solicitar confirmación</button>
                                     </div>
                                 </div>
 
@@ -150,6 +212,6 @@ span{
   border-color: red;
 }
 .margin-top{
-    margin-top: 100px;
+    margin-top: 10px;
 }
 </style>

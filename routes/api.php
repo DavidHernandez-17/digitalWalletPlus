@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Customer\RegisterController;
+use App\Http\Controllers\Wallet\PayController;
 use App\Http\Controllers\Wallet\RechargeWalletController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,3 +27,5 @@ Route::post('cliente/registrar', [RegisterController::class, 'customerRegistrati
 # Wallet
 Route::post('billetera/recargar/{id}', [RechargeWalletController::class, 'index'])->name('index.recharge_wallet');
 Route::post('billetera/recargar', [RechargeWalletController::class, 'recharge'])->name('recharge_wallet');
+Route::get('billetera/pagar', [PayController::class, 'index'])->name('index.pay_wallet');
+Route::post('billetera/pagar', [PayController::class, 'requestPayment'])->name('requestPayment.pay_wallet');

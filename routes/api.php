@@ -35,6 +35,7 @@ Route::post('billetera/recargar', [RechargeWalletController::class, 'recharge'])
 Route::get('billetera/pagar', [PayController::class, 'index'])->name('index.pay_wallet');
 Route::post('billetera/pagar', [PayController::class, 'requestPayment'])->name('requestPayment.pay_wallet');
 Route::post('billetera/confirmar/pago', [PayController::class, 'makePayment']);
+Route::post('billetera/cancelar/pago', [PayController::class, 'cancelPayment']);
 
 # Wallet balance
 Route::post('billetera/saldo', [BalanceWalletController::class, 'validateResquest']);

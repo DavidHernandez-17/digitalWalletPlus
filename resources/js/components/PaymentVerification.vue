@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from "vue";
+import Swal from 'sweetalert2';
 
 const showComponent = ref(true);
 const code = ref('');
@@ -34,17 +35,39 @@ const submitForm = async() => {
     else{
         await axios.post('/api/billetera/confirmar/pago', request )
         .then(res=>{
-            alert('El pago se realizó correctamente');
+            message.value = res.data[1];
+            showAlert('Exito', 'success');
+            setTimeout(() => {
+                window.location.href = '/';
+            }, 3000);
         })
         .catch(err=>{
             console.log(err);
-            message.value.push(err.response.data[1])
+            message.value = err.response.data[1];
+            showAlert('Oops...', 'error');
         })
     }
 }
 
 const cancelPayment = async() => {
+    let request = {
+        'document': props.id_customer,
+        'id_session': props.id_session,
+    };
 
+    await axios.post('/api/billetera/cancelar/pago', request )
+    .then(res=>{
+        message.value = res.data[1];
+        showAlert('Exito', 'success');
+        setTimeout(() => {
+            window.location.href = '/';
+        }, 3000);
+    })
+    .catch(err=>{
+        console.log(err);
+        message.value = err.response.data[1];
+        showAlert('Oops...', 'error');
+    })
 }
 
 const showButton = computed(() => {
@@ -55,6 +78,16 @@ const showButton = computed(() => {
 const styles = computed(() => {
     return status.value ? ['success'] : ['error'];
 });
+
+const showAlert = (title, icon) => {
+    Swal.fire({
+        title: title,
+        text: message.value,
+        icon: icon,
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#2C607F'
+    });
+};
 
 const handleInput = (index, event) => {
     const input = event.target;

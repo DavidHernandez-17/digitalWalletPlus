@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('pay_to')->default('0');
             $table->integer('value');
             $table->string('id_session');
-            $table->boolean('status');
+            $table->string('status');
             $table->timestamps();
         });
     }

@@ -80,7 +80,7 @@ class PayController extends Controller
                         'pay_to' => $request->pay_to,
                         'value' => $request->value,
                         'id_session' => $id_session,
-                        'status' => '1',
+                        'status' => 'PENDIENTE',
                         'created_at' => Carbon::now(),
                         'updated_at' => Carbon::now(),
                     ]);
@@ -134,7 +134,7 @@ class PayController extends Controller
 
         # Validar si la sesión está habilitada
         $transactionEnabled = LogWallet::where('id_client', $user->id)
-            ->where('status', '1')
+            ->where('status', 'PENDIENTE')
             ->latest()->first();
         
         if ($transactionEnabled && $transactionEnabled->id_session == $request->id_session) {
@@ -145,7 +145,7 @@ class PayController extends Controller
             $wallet->save();
 
             # Deshabilito id session
-            $transactionEnabled->status = 0;
+            $transactionEnabled->status = 'COMPLETADA';
             $transactionEnabled->save();
 
             # Expirar el código de verificación
@@ -157,5 +157,33 @@ class PayController extends Controller
         }
         
         return response(['error', 'Error al realizar el pago, id session inactivo'], 404);
+    }
+
+    public function cancelPayment(Request $request){
+        $customer = User::where('document', $request->document)->first();
+        $movement = LogWallet::where('id_client', $customer->id)
+            ->where('id_session', $request->id_session)
+            ->where('status', 'PENDIENTE')
+            ->latest()
+            ->first();
+
+        if( $customer && $movement ){
+
+            $codeVerification = VerificationCode::where('id_client', $customer->id)->latest()->first();
+
+            # Expiro código de seguridad
+            $codeVerification->update([
+                'expire_at' => Carbon::now()->addMinutes(-10),
+            ]);
+
+            # Dehabilito movimiento
+            $movement->update([
+                'status' => 'CANCELADO',
+            ]);
+
+            return response()->json(['success', 'El pago fue cancelado correctamente.'], 200);
+        }
+        
+        return response()->json(['error', 'Evento inesperado, intentelo de nuevo'], 404);
     }
 }

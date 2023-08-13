@@ -17,7 +17,7 @@ class PaymentVerification extends Controller
     public function index($id_session, $id_customer){
         $customer = User::where('document', $id_customer)->first();
         $lastLog = LogWallet::where('id_client', $customer->id)
-            ->where('status', '1')
+            ->where('status', 'PENDIENTE')
             ->latest()->first();
 
         if ($lastLog && $lastLog->id_session == $id_session) {

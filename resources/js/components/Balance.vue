@@ -7,13 +7,6 @@ const document = ref('');
 const cell_phone = ref('');
 const messages = ref('');
 
-// const props = defineProps({
-//     show: {
-//         type: Boolean,
-//         default: false
-//     },
-// });
-
 const emits = defineEmits(['close']);
 
 const save = () => {

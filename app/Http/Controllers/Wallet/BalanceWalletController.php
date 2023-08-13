@@ -11,9 +11,11 @@ use Illuminate\Support\Facades\Validator;
 
 class BalanceWalletController extends Controller
 {
-    public function index($id_customer) {
+    public function index(Request $request) {
+        $id_customer = $request->input('id_customer');
+        $originalId = decrypt($id_customer);
         return view('wallet.balance', [
-            'id_customer' => $id_customer
+            'id_customer' => $originalId
         ]);
     }
     
@@ -44,7 +46,8 @@ class BalanceWalletController extends Controller
             ->first();
 
         if ($customer) {
-            $redirection = route('index.checkbalance', ['id_customer' => $request->document]);
+            $encryptedId = encrypt($request->document);
+            $redirection = route('index.checkbalance', ['id_customer' => $encryptedId]);
             return response()->json([
                 'message' => 'Operación existosa',
                 'redirect' => $redirection

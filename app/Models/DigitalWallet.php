@@ -21,6 +21,6 @@ class DigitalWallet extends Model
 
     public function logWallet()
     {
-        return $this->belongsTo(LogWallet::class);
+        return $this->hasMany(LogWallet::class);
     }
 }

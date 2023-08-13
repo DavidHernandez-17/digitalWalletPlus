@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\Security\PaymentVerification;
+use App\Http\Controllers\Wallet\BalanceWalletController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,3 +21,4 @@ Route::get('/', function () {
 })->name('index');
 
 Route::get('billetera/confirmar/pago/{id_sesion}/{id_customer}', [PaymentVerification::class, 'index']);
+Route::get('billetera/saldo/{id_customer}', [BalanceWalletController::class, 'index'])->name('index.checkbalance');

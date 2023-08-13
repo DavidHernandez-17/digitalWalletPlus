@@ -52,4 +52,8 @@ class User extends Authenticatable
     public function verificationCodes(){
         return $this->hasMany(VerificationCode::class);
     }
+
+    public function movements(){
+        return $this->hasMany(LogWallet::class, 'id_client');
+    }
 }

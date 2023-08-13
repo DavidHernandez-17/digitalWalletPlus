@@ -7,12 +7,12 @@ const document = ref('');
 const cell_phone = ref('');
 const messages = ref('');
 
-const props = defineProps({
-    show: {
-        type: Boolean,
-        default: false
-    },
-});
+// const props = defineProps({
+//     show: {
+//         type: Boolean,
+//         default: false
+//     },
+// });
 
 const emits = defineEmits(['close']);
 
@@ -23,12 +23,14 @@ const save = () => {
     };
 
     messages.value = {};
-    axios.post(route('get_user'), request)
+    axios.post('api/billetera/saldo', request)
     .then(response => {
-        messages.value = response.data;
+        messages.value = response.data.message;
         console.log(messages.value);
         showAlert('Exito', 'success');
-        emits('close');
+        if (response.data.redirect) {
+            window.location.href = response.data.redirect;
+        }
     })
     .catch(error => {
         if (error.response && error.response.status === 422) {
@@ -36,6 +38,8 @@ const save = () => {
             messages.value.cell_phone = error.response.data.cell_phone;
             console.log(error.response);
         } else {
+            messages.value = error.response.data;
+            showAlert('Oops...', 'error');
             console.error(error.response);
         }
     });
@@ -49,8 +53,6 @@ const showAlert = (title, icon) => {
         icon: icon,
         confirmButtonText: 'Aceptar',
         confirmButtonColor: '#2C607F'
-    }).then(()=>{
-        window.location.reload();
     });
 };
 

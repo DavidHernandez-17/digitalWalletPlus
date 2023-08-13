@@ -11,6 +11,7 @@ const wallet = ref('');
 const optionsConcept = ref();
 const optionsWallet = ref();
 const messages = ref('');
+const showButton = ref(true);
 
 const props = defineProps({
     show: {
@@ -41,17 +42,20 @@ const save = () => {
     };
 
     messages.value = {};
+    showButton.value = false;
     axios.post('api/billetera/pagar', request)
     .then(response => {
-        messages.value = response.data;
-        console.log(messages.value);
-        showAlert('Exito', 'success');
-        emits('close');
         document.value = '';
         concept.value = '';
         pay_to.value = '';
         value.value = '';
-        wallet.value = ''
+        wallet.value = '';
+        try {
+            window.location.href = '/billetera/confirmar/pago/' + response.data.id_session + '/' + response.data.id_customer;
+        } catch (error) {
+            console.log(error);
+            showButton.value = true;
+        }
     })
     .catch(error => {
         if (error.response && error.response.status === 422) {
@@ -61,9 +65,11 @@ const save = () => {
             messages.value.value = error.response.data.value;
             messages.value.wallet = error.response.data.wallet;
             console.log(error.response);
+            showButton.value = true;
         } else {
             messages.value = error.response.data;
             showAlert('Oops...', 'error');
+            showButton.value = true;
             console.error(error.response.data);
         }
     });
@@ -186,7 +192,8 @@ onMounted(() => {
                                 <div class="row mt-3 mb-2">
                                     <div class="col-md-12">
                                         <button class="btn btn-outline-secondary" @click.prevent="close"><i class="fa-solid fa-arrow-left"></i></button>
-                                        <button @click.prevent="save()" class="btn btn-outline-primary ms-2"><i class="fa-solid fa-sm fa-lock"></i> Confirmar pago</button>
+                                        <button v-if="showButton" @click.prevent="save()" class="btn btn-outline-primary ms-2"><i class="fa-solid fa-sm fa-lock"></i> Confirmar pago</button>
+                                        <button v-else @click.prevent="save()" class="btn btn-outline-primary ms-2" disabled><i class="fa-solid fa-circle-notch fa-spin"></i> Cargando</button>
                                     </div>
                                 </div>
                             </div>

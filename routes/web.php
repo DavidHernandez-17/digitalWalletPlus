@@ -20,5 +20,5 @@ Route::get('/', function () {
     return view('welcome');
 })->name('index');
 
-Route::get('billetera/confirmar/pago/{id_sesion}/{id_customer}', [PaymentVerification::class, 'index']);
+Route::get('billetera/confirmar/pago/{id_sesion}/{id_customer}', [PaymentVerification::class, 'index'])->name('verificationPayment');
 Route::get('billetera/saldo', [BalanceWalletController::class, 'index'])->name('index.checkbalance');

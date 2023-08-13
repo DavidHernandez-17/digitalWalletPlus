@@ -43,6 +43,10 @@ const getMovements = async () => {
     });
 }
 
+const close = () =>{
+    window.location.href = '/';
+}
+
 const valueFormated = computed(() => {
     return function(value) {
         return value.toLocaleString('es-CO', {
@@ -83,6 +87,7 @@ onMounted( async () => {
     <div class="container-xl px-4 mt-n10 mt-5">
         <div class="h1 text-primary larger-text text-center"><strong>Billetera digital</strong><h5>plus <i class="fa-regular fa-copyright small"></i></h5></div>
         <div class="h1 text-primary larger-text text-center"><h6>Consulta tu saldo</h6></div>
+        <button class="btn btn-outline-secondary mb-2" @click.prevent="close"><i class="fa-solid fa-arrow-left"></i> Inicio</button>
         <div class="card mb-5">
             <div class="card">
                 <div class="card-header">
@@ -90,8 +95,8 @@ onMounted( async () => {
                         <strong>Cliente: </strong>
                     </div>
                     <div class="row ms-1">
-                        {{ customer.full_name }} |
-                        {{ customer.email }} |
+                        {{ customer.full_name }} ·
+                        {{ customer.email }} ·
                         {{ customer.cell_phone }}
                     </div>
                 </div>

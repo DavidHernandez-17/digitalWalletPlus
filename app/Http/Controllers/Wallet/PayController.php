@@ -86,8 +86,11 @@ class PayController extends Controller
                     ]);
 
                     $requestCode = new PaymentVerification();
-                    $response = $requestCode->requestGenerateCode($request->document, $id_session);
-                    return response()->json($response , 200);
+                    $requestCode->requestGenerateCode($request->document, $id_session);
+                    return response()->json([
+                        "id_session" => $id_session,
+                        "id_customer" => $request->document
+                    ], 200);
                 }
 
                 return response()->json('No tienes saldo disponible en tu billera '. $wallet->name  , 400);
